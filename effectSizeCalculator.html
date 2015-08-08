@@ -1,0 +1,149 @@
+<!--CREATED BY PAUL TURCHAN AND MATTHEW VALENTE (2013)-->
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+        <title>Effect Size Calculator</title>
+        <!--LOAD SQUAREGRID.CSS STYLESHEET-->
+        <link rel="stylesheet" href="squaregrid.css"/>
+        <style type="text/css">
+            i {padding-right: 3px}
+            body {font-family: 'Open Sans', sans-serif; font-size: 12px;}
+            input[type="number"], input[type="text"] {width: 56px;}
+            input[type="button"] {width: 452px; height: 30px; border: 0px;}
+            #calculateTEffectSizes {background-color: #00A0B0; color: #fff; font-size: 18px; font-family: 'Open Sans', sans-serif;}
+            #calculateChiSquareEffectSizes {background-color: #00A0B0; color: #fff; font-size: 18px; font-family: 'Open Sans', sans-serif;}            
+            span.superscript {vertical-align: super; font-size: 8px; margin-left: 2px;}
+        </style>
+        <!--LOAD FUNCTIONS FOR PARTICULAR MODELS/TESTS-->
+        <script type="text/javascript" src="studentsTTest.js"></script>
+        <script type="text/javascript" src="chiSquareTest.js"></script>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="container">
+                <!--HEADER-->
+                <div class="sg-35" style="color:#000; text-align:center; background-color:#FFF; margin:7px 0px 0px 0px; font-size:36px; line-height:38px;">
+                    Effect Size Calculators
+                </div>
+                <!--STUDENT'S T TEST-->
+                <div class="sg-35" style="color:#FFF; text-align:center; background-color:#151101; margin:7px 0px 0px 0px; font-size:24px; line-height:28px;">
+                    Student's <i>t</i>-test
+                </div>
+                <!--DESCRIPTION OF WHAT THIS CALCULATOR COMPUTES GIVEN THE POSSIBLE COMBINATION OF VALUES-->
+                <div class="sg-35" style="color:#000; background-color:#FFF; margin:0px 0px 7px 0px; font-size:13px; line-height:18px; padding-left:12px">
+                    This calculator allows you to compute effect sizes for Student's <i>t</i>-test using: (1) <i>M</i>s, <i>SD</i>s, and <i>N</i>s; (2) <i>M</i>s and <i>SD</i>s; (3) <i>t</i> and <i>N</i>s; or (4) <i>t</i> and <i>df</i>. Furthermore, you may select the variance assumption (equal vs. unequal). Note: Equal <i>N</i>s assumed if only <i>df</i> defined.
+                </div>
+                <!--SUB HEADERS-->
+                <div class="sg-17" style="color:#FFF; text-align:center; background-color:#00A0B0; margin-right:28px; line-height:28px; font-size:18px">
+                    Options
+                </div>
+                <div class="sg-17" style="color:#FFF; text-align:center; background-color:#F0A830; line-height:28px; font-size:18px">
+                    Effect Sizes
+                </div>
+                <!--USER ENTRY FOR STUDENT'S t-TEST-->
+                <div id="testOptions" class="sg-17" style="background-color:#dbebed; height:364; margin-right:28px;">
+                    <div style="padding-left:12px">
+                        <!--TEST OPTIONS-->
+                        <label>Test Type : </label>
+                        <input type="radio" id="independentTTest" name="studentsTTestType" checked="checked" onclick="studentsTUpdate()"/><label for="independentTTest">Independent</label>
+                        <input type="radio" id="pairedTTest" name="studentsTTestType" onclick="studentsTUpdate()"/><t for="pairedTTest">Paired</label>
+                        <br/>
+                        <!--VARIANCE ASSUMPTION-->
+                        <div id="varianceOptions">
+                            <label>Variance : </label>
+                            <input type="radio" id="equalVariance" name="varianceAssumption" checked="checked"/><label for="equalVariance">Equal Variance Assumed</label>
+                            <input type="radio" id="unequalVariance" name="varianceAssumption"/><label for="unequalVariance">Unequal Variance Assumed</label>        
+                        </div>
+                        <!--DATA SOURCE-->
+                        <div id="dataSource">
+                            <label>Data Source : </label>
+                            <input type="radio" id="dataSourceDescriptives" name="dataSource" checked="checked" onclick="studentsTUpdate()"/><label for="dataSourceDescriptives">Descriptives</label>
+                            <input type="radio" id="dataSourceRaw" name="dataSource" onclick="studentsTUpdate()"/><label for="dataSourceRaw">Raw</label>        
+                        </div>                
+                        <!--NON-GROUP SPECIFIC-->
+                        <label><i>t</i> (or <i>t</i>') : </label><input type="number" id="studentsT" name="studentsT" step=".01">
+                        <label>Degrees of Freedom (<i>v</i> or <i>v</i>') : </label><input type="text" id="degreesOfFreedom">
+                        <br/>
+                        <!--Ms, SDs, AND Ns-->
+                        <!--GROUP 1-->
+                        <label id="nOneLabel">Sample Size 1 : </label><input type="number" id="nOne" name="nOne" min="0">
+                        <label>Mean 1 : </label><input type="number" id="meanOne" name="meanOne" step=".01">
+                        <label id="stDevOneLabel">Standard Deviation 1 : </label><input type="number" id="stDevOne" name="stDevOne" step=".01">
+                        <br/>
+                        <!--GROUP 2-->
+                        <label id="nTwoLabel">Sample Size 2 : </label><input type="number" id="nTwo" name="nTwo" min="0">
+                        <label>Mean 2 : </label><input type="number" id="meanTwo" name="meanTwo" step=".01">
+                        <label id="stDevTwoLabel">Standard Deviation 2 : </label><input type="number" id="stDevTwo" name="stDevTwo" step=".01">      
+                        <!--EXECUTE JS CODE FOR STUDENT'S T-TEST-->
+                        <input type="button" onClick="calculateStudentsTESs()" id="calculateTEffectSizes" value="Calculate Effect Sizes"/>
+                    </div>                                          
+                </div>        
+                <!--EFFECT SIZES FOR STUDENT'S T-TEST-->
+                <div class="sg-17" style="background-color:#f4ece0; height:364px">
+                    <div style="padding-left:12px" title="test">
+                        <label>Cohen's <i>d</i> : </label><input type="text" id="cohensD"><label> 95% CI : </label><input type="text" id="cohensDCI" style="width:112px"><br/>
+                        <label>Hedge's <i>g</i> : </label><input type="text" id="hedgesG"><br/>
+                        <label>Hedge's <i>g</i> (unbiased; δ hat) : </label><input type="text" id="deltaHat"><br/>
+                        <label>Glass' Δ (group 1 as control) : </label><input type="text" id="glassDeltaGroupOne"><br/>
+                        <label>Glass' Δ (group 2 as control) : </label><input type="text" id="glassDeltaGroupTwo"><br/>
+                        <label>Glass' Δ (unbiased; group 1 as control) : </label><input type="text" id="glassDeltaUnbiasedGroupOne"><br/>
+                        <label>Glass' Δ (unbiased; group 2 as control) : </label><input type="text" id="glassDeltaUnbiasedGroupTwo"><br/>
+                        <label>Pearson's <i>r</i> : </label><input type="text" id="pearsonsR"><br/>
+                        <label>η<span class="superscript">2</span> or <i>r</i><span class="superscript">2</span> : </label><input type="text" id="etaAndRSquared"><br/>
+                        <label>ω<span class="superscript">2</span> : </label><input type="text" id="omegaSquared"><br/>
+                        <label>Cohen's <i>f</i><span class="superscript">2</span> : </label><input type="text" id="cohensFSquared"><br/>
+                        <label>Probability of Superiority (for group 1) : </label><input type="text" id="probabilityOfSuperiority"><br/>
+                    </div>
+                </div>
+                <!--CHI-SQUARED TEST-->
+                <div class="sg-35" style="color:#FFF; text-align:center; background-color:#151101; margin:28px 0px 0px 0px; font-size:24px; line-height:28px;">
+                    Chi-Squared Test
+                </div>
+                <div class="sg-35" style="color:#000; background-color:#FFF; margin:0px 0px 7px 0px; font-size:13px; line-height:18px; padding-left:12px">
+                    This calculator allows you to compute effect sizes for a Chi-Square Test using: (1) χ<span class="superscript">2</span>, <i>N</i>; (2) χ<span class="superscript">2</span>, <i>N</i>, rows, columns; or (3) χ<span class="superscript">2</span>, <i>N</i>, levels. Furthermore, you may select the test type (test of independence vs. goodness of fit).
+                </div> 
+                <!--SUB HEADERS-->
+                <div class="sg-17" style="color:#FFF; text-align:center; background-color:#00A0B0; margin-right:28px; line-height:28px; font-size:18px">
+                    Options
+                </div>
+                <div class="sg-17" style="color:#FFF; text-align:center; background-color:#F0A830; line-height:28px; font-size:18px">
+                    Effect Sizes
+                </div>
+                <!--USER ENTRY FOR CHI-SQUARE TEST-->
+                <div class="sg-17" style="background-color:#dbebed; height:224px; margin-right:28px;">
+                    <div style="padding-left:12px">
+                        <!--TEST OPTIONS-->
+                        <label>Test Type : </label>
+                        <input type="radio" id="testOfIndependence" name="chiSquareTestType" checked="checked" onclick="chiSquareUpdate()"/><label for="testOfIndependence">Test of Independence</label>
+                        <input type="radio" id="goodnessOfFitTest" name="chiSquareTestType" onclick="chiSquareUpdate()"/><label for="goodnessOfFitTest">Goodness of Fit</label>
+                        <br/>
+                        <label>χ<span class="superscript">2</span> : </label><input type="number" id="chiSquared" step=".01">
+                        <label>Degrees of Freedom : </label><input type="text" id="degreesOfFreedomChi" disabled>
+                        <br/>
+                        <label id="sampleSizeLabel">Sample Size (<i>N</i>) : </label><input type="number" id="sampleSizeChi" step="1">
+                        <label id="rowsLabel">Row Levels : </label><input type="number" id="rowLevels" step="1" min="2">
+                        <label id="columnsLabel">Column Levels : </label><input type="number" id="columnLevels" step="1" min="2">
+                        <input type="button" onClick="calculateChiSquareESs()" id="calculateChiSquareEffectSizes" value="Calculate Effect Sizes"/>
+                    </div>                                          
+                </div>        
+                <!--EFFECT SIZES FOR CHI-SQUARE TEST-->
+                <div class="sg-17" style="background-color:#f4ece0; height:224px">
+                    <div style="padding-left:12px">
+                        <label>ϕ or Pearson's <i>r</i>: </label><input type="text" id="phi"><br/>
+                        <label>ϕ<span class="superscript">2</span> or <i>r</i><span class="superscript">2</span>: </label><input type="text" id="phiSquared"><br/>
+                        <label>Cramer's <i>V</i> : </label><input type="text" id="cramersV"><br/>
+                        <label>Contingency Coefficient, <i>C</i> : </label><input type="text" id="contingencyCoefficient"><br/>                                                        
+                        <label><i>w</i> : </label><input type="text" id="cohensW"><br/>
+                        <label>Cohen's <i>d</i> : </label><input type="text" id="cohensDChi"><br/>
+                    </div>
+                </div>
+                <!--FOOTER-->        
+                <div class="sg-35" style="color:#BCBCBC; text-align:center; background-color:#FFF; margin:7px 0px 7px 0px; font-size:11px; line-height:15px">
+                        Created by <a href="https://ju.academia.edu/PaulTurchan">Paul Turchan</a> and <a href="http://www.researchgate.net/profile/Matthew_Valente/">Matthew Valente</a> (2013)<br/>
+                        In Contribution to the Open Science Collaboration, a COS Sponsored Group<br/>
+                        <a href="http://centerforopenscience.org/"><img src="cosLogo.png" onmouseover="this.src='cosLogoColor.png'" onmouseout="this.src='cosLogo.png'" ></a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
